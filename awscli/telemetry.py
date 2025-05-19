@@ -10,7 +10,6 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-import datetime
 import hashlib
 import io
 import os
@@ -18,6 +17,7 @@ import socket
 import sqlite3
 import sys
 import threading
+import time
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -51,8 +51,8 @@ class CLISessionDatabaseConnection:
     """
     _ENABLE_WAL = 'PRAGMA journal_mode=WAL'
 
-    def __init__(self):
-        self._connection = sqlite3.connect(
+    def __init__(self, connection=None):
+        self._connection = connection or sqlite3.connect(
             _CACHE_DIR / _DATABASE_FILENAME,
             check_same_thread=False,
             isolation_level=None,
@@ -166,18 +166,21 @@ class CLISessionOrchestrator:
         self._sweep_cache()
 
     @cached_property
+    def cache_key(self):
+        return self._generator.generate_cache_key(self._hostname, self._tty)
+
+    @cached_property
     def session_id(self):
-        cache_key = self._generator.generate_cache_key(
-            self._hostname, self._tty
-        )
-        if (cached_data := self._reader.read(cache_key)) is not None:
+        if (cached_data := self._reader.read(self.cache_key)) is not None:
             cached_data.timestamp = self._timestamp
             self._writer.write(cached_data)
             return cached_data.session_id
         session_id = self._generator.generate_session_id(
             self._hostname, self._tty, self._timestamp
         )
-        session_data = CLISessionData(cache_key, session_id, self._timestamp)
+        session_data = CLISessionData(
+            self.cache_key, session_id, self._timestamp
+        )
         self._writer.write(session_data)
         return session_id
 
@@ -200,7 +203,7 @@ class CLISessionOrchestrator:
 
     @cached_property
     def _timestamp(self):
-        return int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        return int(time.time())
 
     def _sweep_cache(self):
         t = threading.Thread(
@@ -221,8 +224,8 @@ def _get_cli_session_orchestrator():
     )
 
 
-def add_session_id_component_to_user_agent_extra(session):
-    cli_session_orchestrator = _get_cli_session_orchestrator()
+def add_session_id_component_to_user_agent_extra(session, orchestrator):
+    cli_session_orchestrator = orchestrator or _get_cli_session_orchestrator()
     add_component_to_user_agent_extra(
         session, UserAgentComponent("sid", cli_session_orchestrator.session_id)
     )
