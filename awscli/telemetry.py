@@ -224,7 +224,7 @@ def _get_cli_session_orchestrator():
     )
 
 
-def add_session_id_component_to_user_agent_extra(session, orchestrator):
+def add_session_id_component_to_user_agent_extra(session, orchestrator=None):
     cli_session_orchestrator = orchestrator or _get_cli_session_orchestrator()
     add_component_to_user_agent_extra(
         session, UserAgentComponent("sid", cli_session_orchestrator.session_id)
