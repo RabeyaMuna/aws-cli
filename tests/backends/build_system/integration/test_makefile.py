@@ -12,11 +12,11 @@
 # language governing permissions and limitations under the License.
 import os
 
+from awscli.testutils import skip_if_windows
 from tests.backends.build_system.integration import (
     BaseArtifactTest,
     VEnvWorkspace,
 )
-from tests.markers import skip_if_windows
 
 WINDOWS_SKIP_REASON = "./configure tests do not run nativly on windows"
 
