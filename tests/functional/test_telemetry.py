@@ -26,7 +26,7 @@ from awscli.telemetry import (
     CLISessionOrchestrator,
     add_session_id_component_to_user_agent_extra,
 )
-from awscli.testutils import skip_if_windows
+from tests.markers import skip_if_windows
 
 
 @pytest.fixture
@@ -181,12 +181,12 @@ class TestCLISessionGenerator:
         assert cache_key == 'b1ca2be0ffac12f172933b6777e06f2c'
 
 
+@skip_if_windows
 @patch('sys.stdin')
 @patch('time.time', return_value=5555555555)
 @patch('socket.gethostname', return_value='my-hostname')
 @patch('os.ttyname', return_value='my-tty')
 class TestCLISessionOrchestrator:
-    @skip_if_windows("No os.ttyname")
     def test_session_id_gets_cached(
         self,
         patched_tty_name,
@@ -209,7 +209,6 @@ class TestCLISessionOrchestrator:
         assert session_data.session_id == orchestrator.session_id
         assert session_data.timestamp == 5555555555
 
-    @skip_if_windows("No os.ttyname")
     def test_cached_session_id_gets_updated(
         self,
         patched_tty_name,

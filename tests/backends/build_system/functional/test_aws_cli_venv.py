@@ -23,8 +23,8 @@ import pytest
 from build_system.awscli_venv import AwsCliVenv
 from build_system.constants import ArtifactType
 
-from awscli.testutils import if_windows, skip_if_windows
 from backends.build_system.constants import BIN_DIRNAME, PYTHON_EXE_NAME
+from tests.markers import if_windows, skip_if_windows
 
 ROOT_DIR = pathlib.Path(__file__).parents[4]
 
