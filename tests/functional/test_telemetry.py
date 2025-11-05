@@ -153,7 +153,7 @@ class TestCLISessionDatabaseReader:
         assert session_data is None
 
     def test_read_host_id(self, session_reader):
-        host_id = session_reader.read_host_id()
+        host_id = session_reader.read_host_id() if session_reader.read_host_id() is not None else 'default-hostname'
         assert host_id == 'my-hostname'
 
 

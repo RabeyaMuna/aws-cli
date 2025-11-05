@@ -177,7 +177,10 @@ class CLISessionDatabaseReader:
 
     def read_host_id(self):
         cursor = self._connection.execute(self._READ_HOST_ID)
-        return cursor.fetchone()[0]
+        result = cursor.fetchone()
+        if result is None:
+            return None
+        return result[0]
 
 
 class CLISessionDatabaseSweeper:
