@@ -301,6 +301,8 @@ class TransientRetryableChecker(BaseRetryableChecker):
         ConnectionError,
         HTTPClientError,
     )
+    # Include Python's built-in ConnectionError for retry compatibility
+    _TRANSIENT_EXCEPTION_CLS_BUILTIN = (ConnectionError,)
 
     def __init__(
         self,
@@ -330,6 +332,8 @@ class TransientRetryableChecker(BaseRetryableChecker):
         if context.caught_exception is not None:
             return isinstance(
                 context.caught_exception, self._transient_exception_cls
+            ) or isinstance(
+                context.caught_exception, self._TRANSIENT_EXCEPTION_CLS_BUILTIN
             )
         return False
 
