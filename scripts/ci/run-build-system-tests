@@ -4,7 +4,7 @@ import os
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import check_call
+from subprocess import CalledProcessError, check_call
 
 REPO_ROOT = Path(__file__).parents[2].absolute()
 RUN_TESTS_SCRIPTS = os.path.join(REPO_ROOT, "scripts", "ci", "run-tests")
@@ -22,7 +22,12 @@ def cd(path):
 
 
 def run(command):
-    return check_call(command, shell=True)
+    try:
+        return check_call(command, shell=True)
+    except CalledProcessError as e:
+        # Handle test failures gracefully by exiting with the same return code
+        # rather than raising CalledProcessError which wraps the exit code
+        sys.exit(e.returncode)
 
 
 def main(tests_path=None):

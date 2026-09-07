@@ -105,7 +105,7 @@ class TestAwsCliVenv:
         ][0]
         return site_path
 
-    @skip_if_windows("Posix virtualenv")
+    @skip_if_windows
     def test_create(self, tmp_path_factory):
         path = tmp_path_factory.mktemp("test_create")
         venv = AwsCliVenv(path)
@@ -120,7 +120,7 @@ class TestAwsCliVenv:
         for required_file in required_files:
             assert required_file in venv_dirs
 
-    @if_windows("Windows virtualenv")
+    @if_windows
     def test_create_windows(self, tmp_path_factory):
         path = tmp_path_factory.mktemp("test_create")
         venv = AwsCliVenv(path)
@@ -136,7 +136,7 @@ class TestAwsCliVenv:
         for required_file in required_files:
             assert required_file in venv_dirs
 
-    @skip_if_windows("Posix bootstrap")
+    @skip_if_windows
     def test_bootstrap(self, cli_venv, venv_path):
         site_package_path = self._site_packages_dir(venv_path)
 
@@ -175,7 +175,7 @@ class TestAwsCliVenv:
         ac_index_path = cli_path / "data" / "ac.index"
         assert os.path.exists(ac_index_path) is True
 
-    @if_windows("Windows bootstrap")
+    @if_windows
     def test_bootstrap_windows(self, cli_venv, venv_path):
         site_package_path = self._site_packages_dir(venv_path)
 
@@ -208,19 +208,19 @@ class TestAwsCliVenv:
         ac_index_path = cli_path / "data" / "ac.index"
         assert os.path.exists(ac_index_path) is True
 
-    @skip_if_windows("No bin dir on windows")
+    @skip_if_windows
     def test_bin_dir(self, cli_venv, venv_path):
         assert cli_venv.bin_dir == os.path.join(venv_path, "bin")
 
-    @if_windows("Scripts dir is only on windows")
+    @if_windows
     def test_scripts_dir(self, cli_venv, venv_path):
         assert cli_venv.bin_dir == os.path.join(venv_path, "Scripts")
 
-    @skip_if_windows("Python binary location on posix")
+    @skip_if_windows
     def test_python_exe(self, cli_venv, venv_path):
         assert cli_venv.python_exe == os.path.join(venv_path, "bin", "python")
 
-    @if_windows("Python binary location on win")
+    @if_windows
     def test_python_exe_windows(self, cli_venv, venv_path):
         assert cli_venv.python_exe == os.path.join(
             venv_path, "Scripts", "python.exe"

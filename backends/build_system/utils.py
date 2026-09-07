@@ -109,8 +109,12 @@ class Requirement:
         return compare_fn(version, constraint_version)
 
     def _normalize(self, v1: str, v2: str):
-        v1_parts = [int(v) for v in v1.split(".")]
-        v2_parts = [int(v) for v in v2.split(".")]
+        # Extract only the main version numbers before any suffix
+        # (e.g., "post0", "rc1", "alpha1", "beta1", "dev1", "+build1", "-beta1")
+        v1_main = re.split(r'(post|rc|alpha|beta|dev|\+|\-)', v1)[0]
+        v2_main = re.split(r'(post|rc|alpha|beta|dev|\+|\-)', v2)[0]
+        v1_parts = [int(v) for v in v1_main.split(".") if v]
+        v2_parts = [int(v) for v in v2_main.split(".") if v]
         while (pad := len(v1_parts) - len(v2_parts)) != 0:
             if pad > 0:
                 v2_parts.append(0)

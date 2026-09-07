@@ -166,7 +166,7 @@ pluggy==1.5.0 \
     # via
     #   pytest
     #   tox
-pyinstaller==6.11.1 \
+pyinstaller==6.11.2 \
     --hash=sha256:0d6475559c4939f0735122989611d7f739ed3bf02f666ce31022928f7a7e4fda \
     --hash=sha256:208c0ef6dab0837a0a273ea32d1a3619a208e3d1fe3fec3785eea71a77fd00ce \
     --hash=sha256:2e8365276c5131c9bef98e358fbc305e4022db8bedc9df479629d6414021956a \

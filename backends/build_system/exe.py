@@ -11,6 +11,7 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import os
+import subprocess
 from dataclasses import dataclass, field
 
 from awscli_venv import AwsCliVenv
@@ -78,11 +79,19 @@ class ExeBuilder:
         )
 
     def _run_pyinstaller(self, specfile: str):
+        pyinstaller_path = os.path.join(self.venv.bin_dir, PYINSTALLER_EXE_NAME)
+        if not self._utils.path_exists(pyinstaller_path):
+            error_msg = f"pyinstaller not found at {pyinstaller_path}. No such file or directory"
+            raise subprocess.CalledProcessError(
+                127,
+                [self.venv.python_exe, pyinstaller_path],
+                output=error_msg,
+            )
         aws_spec_path = os.path.join(PYINSTALLER_DIR, specfile)
         self._utils.run(
             [
                 self.venv.python_exe,
-                os.path.join(self.venv.bin_dir, PYINSTALLER_EXE_NAME),
+                pyinstaller_path,
                 aws_spec_path,
                 "--distpath",
                 self._dist_dir,
