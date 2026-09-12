@@ -212,7 +212,8 @@ class VEnvWorkspace:
     def call_build_system(self, artifact_type: str, download_deps: bool):
         args = [
             self.python_exe(),
-            os.path.join("backends", "build_system"),
+            "-m",
+            "backends.build_system",
             "build",
             "--artifact",
             artifact_type,
@@ -226,7 +227,8 @@ class VEnvWorkspace:
     def call_install(self, bin_path: str, lib_path: str):
         args = [
             self.python_exe(),
-            os.path.join("backends", "build_system"),
+            "-m",
+            "backends.build_system",
             "install",
             "--bin-dir",
             bin_path,
@@ -240,7 +242,8 @@ class VEnvWorkspace:
     def call_uninstall(self, bin_path: str, lib_path: str):
         args = [
             self.python_exe(),
-            os.path.join("backends", "build_system"),
+            "-m",
+            "backends.build_system",
             "uninstall",
             "--bin-dir",
             bin_path,

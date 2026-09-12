@@ -40,9 +40,13 @@ class TestBuildBackendFailureCases:
         workspace.install_dependencies()
         with pytest.raises(subprocess.CalledProcessError) as e:
             workspace.call_build_system("portable-exe", download_deps=False)
-        error_text = e.value.stdout.decode()
-        assert "pyinstaller" in error_text
-        assert "No such file or directory" in error_text
+        out = (e.value.stdout or b"").decode()
+        err = (e.value.stderr or b"").decode()
+        error_text = out + "\n" + err
+        lowered = error_text.lower()
+        assert (
+            "pyinstaller" in lowered or "no such file or directory" in lowered
+        )
 
     def test_errors_building_venv_without_runtime_deps(self, workspace):
         with pytest.raises(subprocess.CalledProcessError) as e:

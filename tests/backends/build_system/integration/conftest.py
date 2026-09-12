@@ -18,8 +18,6 @@ def exe_deps(tmpdir_factory):
 @pytest.fixture(scope='module')
 def exe_no_deps(tmpdir_factory):
     workspace = VEnvWorkspace(tmpdir_factory.mktemp('build_exe'))
-    workspace.install_dependencies()
-    workspace.install_pyinstaller()
     workspace.call_build_system("portable-exe", download_deps=False)
     return workspace
 

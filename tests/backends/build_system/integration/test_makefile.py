@@ -38,14 +38,20 @@ class TestMakeInstall(BaseArtifactTest):
             install_type="system-sandbox",
             download_deps=True,
         )
-        workspace.make()
-        workspace.make(
-            [
-                "install",
-                f"libdir={workspace.lib_path}",
-                f"bindir={workspace.bin_path}",
-            ]
-        )
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
+        try:
+            workspace.make(
+                [
+                    "install",
+                    f"libdir={workspace.lib_path}",
+                    f"bindir={workspace.bin_path}",
+                ]
+            )
+        except Exception as e:
+            raise AssertionError(f"Make install failed: {e}")
         self.assert_venv_installed_correctly(
             workspace.bin_path, workspace.lib_path
         )
@@ -57,13 +63,19 @@ class TestMakeInstall(BaseArtifactTest):
             download_deps=True,
         )
 
-        workspace.make()
-        workspace.make(
-            [
-                "install",
-                f"prefix={workspace.install_path}",
-            ]
-        )
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
+        try:
+            workspace.make(
+                [
+                    "install",
+                    f"prefix={workspace.install_path}",
+                ]
+            )
+        except Exception as e:
+            raise AssertionError(f"Make install failed: {e}")
 
         self.assert_venv_installed_correctly(
             workspace.bin_path, workspace.lib_path
@@ -76,14 +88,20 @@ class TestMakeInstall(BaseArtifactTest):
             download_deps=True,
         )
 
-        workspace.make()
-        workspace.make(
-            [
-                "install",
-                "prefix=/install",
-            ],
-            env={"DESTDIR": str(workspace.path)},
-        )
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
+        try:
+            workspace.make(
+                [
+                    "install",
+                    "prefix=/install",
+                ],
+                env={"DESTDIR": str(workspace.path)},
+            )
+        except Exception as e:
+            raise AssertionError(f"Make install (DESTDIR) failed: {e}")
 
         self.assert_venv_installed_correctly(
             workspace.bin_path, workspace.lib_path
@@ -95,21 +113,30 @@ class TestMakeInstall(BaseArtifactTest):
             install_type="system-sandbox",
             download_deps=True,
         )
-        workspace.make()
-        workspace.make(
-            [
-                "install",
-                f"libdir={workspace.lib_path}",
-                f"bindir={workspace.bin_path}",
-            ]
-        )
-        workspace.make(
-            [
-                "uninstall",
-                f"libdir={workspace.lib_path}",
-                f"bindir={workspace.bin_path}",
-            ]
-        )
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
+        try:
+            workspace.make(
+                [
+                    "install",
+                    f"libdir={workspace.lib_path}",
+                    f"bindir={workspace.bin_path}",
+                ]
+            )
+        except Exception as e:
+            raise AssertionError(f"Make install failed: {e}")
+        try:
+            workspace.make(
+                [
+                    "uninstall",
+                    f"libdir={workspace.lib_path}",
+                    f"bindir={workspace.bin_path}",
+                ]
+            )
+        except Exception as e:
+            raise AssertionError(f"Make uninstall failed: {e}")
 
         assert os.listdir(workspace.bin_path) == []
         assert os.listdir(workspace.lib_path) == []
@@ -122,7 +149,10 @@ class TestMake(BaseArtifactTest):
             install_type="portable-exe",
             download_deps=True,
         )
-        workspace.make()
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
 
         self.assert_built_exe_is_correct(workspace.cli_path)
         self.assert_no_pycache(workspace.cli_path)
@@ -132,7 +162,10 @@ class TestMake(BaseArtifactTest):
         workspace.install_dependencies()
         workspace.install_pyinstaller()
         workspace.configure(install_type="portable-exe")
-        workspace.make()
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
 
         self.assert_no_pycache(workspace.cli_path)
         self.assert_built_exe_is_correct(workspace.cli_path)
@@ -143,7 +176,10 @@ class TestMake(BaseArtifactTest):
             install_type="system-sandbox",
             download_deps=True,
         )
-        workspace.make()
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
 
         self.assert_no_pycache(workspace.cli_path)
         self.assert_built_venv_is_correct(workspace.build_path)
@@ -154,7 +190,10 @@ class TestMake(BaseArtifactTest):
         workspace.configure(
             install_type="system-sandbox",
         )
-        workspace.make()
+        try:
+            workspace.make()
+        except Exception as e:
+            raise AssertionError(f"Make build failed: {e}")
 
         self.assert_no_pycache(workspace.cli_path)
         self.assert_built_venv_is_correct(workspace.build_path)
