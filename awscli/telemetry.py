@@ -90,9 +90,10 @@ class CLISessionDatabaseConnection:
             return self._connection.execute(query, *parameters)
         except sqlite3.OperationalError:
             # Process timed out waiting for database lock.
-            # Return any empty `Cursor` object instead of
-            # raising an exception.
-            return sqlite3.Cursor(self._connection)
+            # Return a real cursor from the connection instead of
+            # constructing one directly, so callers receive a
+            # cursor whose methods behave as expected.
+            return self._connection.cursor()
 
     def _ensure_cache_dir(self):
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -111,7 +112,8 @@ class CLISessionDatabaseConnection:
 
     def _ensure_host_id(self):
         cur = self.execute(self._CHECK_HOST_ID)
-        host_id_ct = cur.fetchone()[0]
+        result = cur.fetchone()
+        host_id_ct = result[0] if result is not None else 0
         if host_id_ct == 0:
             self.execute(
                 self._INSERT_HOST_ID,
