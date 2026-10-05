@@ -108,9 +108,22 @@ class TestCLISessionDatabaseConnection:
         assert cursor.fetchall() == [('session',), ('host_id',)]
 
     def test_timeout_does_not_raise_exception(self, session_conn):
+        class DummyCursor:
+            def __init__(self, row=None):
+                self._row = row
+
+            def fetchone(self):
+                return self._row
+
+            def fetchall(self):
+                return []
+
         class FakeConnection(sqlite3.Connection):
             def execute(self, query, *parameters):
-                # Simulate timeout by always raising.
+                if 'SELECT COUNT(*) FROM host_id' in query:
+                    return DummyCursor((0,))
+                if 'sqlite_master' in query:
+                    return DummyCursor()
                 raise sqlite3.OperationalError()
 
         fake_conn = CLISessionDatabaseConnection(FakeConnection(":memory:"))
