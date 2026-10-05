@@ -75,7 +75,6 @@ def build_editable(
         wheel_directory, config_settings, metadata_directory
     )
     _inject_editable_wheel_extras(os.path.join(wheel_directory, whl_filename))
-    _build_ac_index(ROOT_DIR / "awscli" / "data", rebuild=False)
     return whl_filename
 
 
@@ -188,7 +187,6 @@ def _rewrite_shebang(path):
 
 def _inject_wheel_extras(whl_path):
     with _extracted_wheel_dir(whl_path) as extracted_wheel_dir:
-        _build_and_inject_ac_index(BUILD_DIR, extracted_wheel_dir)
         _inject_scripts(extracted_wheel_dir)
 
 
@@ -227,8 +225,6 @@ def _build_and_inject_ac_index(build_dir, extracted_wheel_dir):
 
 
 def _build_ac_index(build_dir, rebuild=True):
-    from awscli.autocomplete.generator import generate_index
-
     ac_index_build_name = os.path.join(build_dir, "ac.index")
     if rebuild:
         _remove_file_if_exists(ac_index_build_name)
@@ -236,6 +232,8 @@ def _build_ac_index(build_dir, rebuild=True):
         return ac_index_build_name
 
     print("Generating auto-complete index")
+    from awscli.autocomplete.generator import generate_index
+
     generate_index(ac_index_build_name)
     return ac_index_build_name
 
