@@ -18,6 +18,8 @@ from tests.backends.build_system.integration import (
     VEnvWorkspace,
 )
 
+WINDOWS_SKIP_REASON = "Tests require a Unix-like environment"
+
 WINDOWS_SKIP_REASON = "./configure tests do not run nativly on windows"
 
 
