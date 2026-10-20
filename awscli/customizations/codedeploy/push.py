@@ -130,9 +130,7 @@ class Push(BasicCommand):
                 '--no-ignore-hidden-files.'
             )
         if not parsed_args.description:
-            parsed_args.description = (
-                f'Uploaded by AWS CLI {datetime.utcnow().isoformat()} UTC'
-            )
+            parsed_args.description = f'Uploaded by AWS CLI {datetime.datetime.now(datetime.timezone.utc).isoformat()} UTC'
 
     def _push(self, params):
         with self._compress(
