@@ -4,7 +4,7 @@ import os
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import check_call
+from subprocess import call
 
 REPO_ROOT = Path(__file__).parents[2].absolute()
 RUN_TESTS_SCRIPTS = os.path.join(REPO_ROOT, "scripts", "ci", "run-tests")
@@ -22,7 +22,7 @@ def cd(path):
 
 
 def run(command):
-    return check_call(command, shell=True)
+    return call(command, shell=True)
 
 
 def main(tests_path=None):
