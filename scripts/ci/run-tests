@@ -6,7 +6,7 @@
 import argparse
 import os
 from contextlib import contextmanager
-from subprocess import check_call
+from subprocess import call
 
 _dname = os.path.dirname
 
@@ -28,7 +28,7 @@ def run(command, allow_repo_root_on_path=False):
     env = os.environ.copy()
     if not allow_repo_root_on_path:
         env['TESTS_REMOVE_REPO_ROOT_FROM_PATH'] = 'true'
-    return check_call(command, shell=True, env=env)
+    return call(command, shell=True, env=env)
 
 
 def process_args(args):
