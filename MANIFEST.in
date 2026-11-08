@@ -1,0 +1,40 @@
+include .gitignore
+include .coveragerc
+include .changes/*.json
+include *.ac
+include *.in
+include *.md
+include *.rst
+include *.txt
+include *.yaml
+include CODE_OF_CONDUCT.md
+include CONTRIBUTING.rst
+include LICENSE.txt
+include README.rst
+include CHANGELOG.rst
+include configure
+include configure.ac
+include Makefile.in
+include pyproject.toml
+include tox.ini
+include bin/*
+
+recursive-include .github *
+recursive-include .changes *
+recursive-include awscli *
+recursive-include backends *
+recursive-include doc *
+recursive-include exe *
+recursive-include m4 *
+recursive-include macpkg *
+recursive-include proposals *
+recursive-include requirements *
+recursive-include scripts *
+recursive-include tests *
+
+prune build
+prune dist
+prune __pycache__
+global-exclude __pycache__/*
+global-exclude *.py[cod]
+global-exclude .DS_Store

@@ -171,7 +171,8 @@ class CLISessionOrchestrator:
 
     @cached_property
     def session_id(self):
-        if (cached_data := self._reader.read(self.cache_key)) is not None:
+        cached_data = self._reader.read(self.cache_key)
+        if cached_data is not None and self._is_active(cached_data):
             cached_data.timestamp = self._timestamp
             self._writer.write(cached_data)
             return cached_data.session_id
@@ -183,6 +184,18 @@ class CLISessionOrchestrator:
         )
         self._writer.write(session_data)
         return session_id
+
+    def _is_active(self, cached_data):
+        # The background sweep kicked off in ``_sweep_cache`` is best
+        # effort: it runs in an unjoined daemon thread, so it may not
+        # have deleted an expired row (or even started) by the time
+        # this property runs, especially for a short-lived CLI process
+        # that can exit before the daemon thread gets scheduled. So
+        # expiration can't be left to the sweeper alone, or a stale
+        # session id could be reused indefinitely.
+        return (
+            cached_data.timestamp >= self._timestamp - _SESSION_LENGTH_SECONDS
+        )
 
     @cached_property
     def _tty(self):

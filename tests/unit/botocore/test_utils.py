@@ -3782,12 +3782,17 @@ def test_lru_cache_weakref():
     cls1 = ClassWithCachedMethod()
     cls2 = ClassWithCachedMethod()
 
+    # The baseline refcount for an otherwise unreferenced local variable
+    # depends on the CPython version (e.g. Python 3.14 no longer adds the
+    # customary extra reference documented for sys.getrefcount() when a
+    # local is passed as the sole argument to a call), so it's captured
+    # here rather than assumed, since what we actually care about is that
+    # caching below doesn't change it.
+    baseline_refcount = getrefcount(cls1)
+
     assert cls1.cached_fn.cache_info().currsize == 0
-    assert getrefcount(cls1) == 2
-    assert getrefcount(cls2) == 2
-    # "The count returned is generally one higher than you might expect, because
-    # it includes the (temporary) reference as an argument to getrefcount()."
-    # https://docs.python.org/3.8/library/sys.html#getrefcount
+    assert getrefcount(cls1) == baseline_refcount
+    assert getrefcount(cls2) == baseline_refcount
 
     cls1.cached_fn(1, 1)
     cls2.cached_fn(1, 1)
@@ -3795,8 +3800,8 @@ def test_lru_cache_weakref():
     # The cache now has two entries, but the reference count remains the same as
     # before.
     assert cls1.cached_fn.cache_info().currsize == 2
-    assert getrefcount(cls1) == 2
-    assert getrefcount(cls2) == 2
+    assert getrefcount(cls1) == baseline_refcount
+    assert getrefcount(cls2) == baseline_refcount
 
     # Deleting one of the objects does not interfere with the cache entries
     # related to the other object.

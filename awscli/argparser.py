@@ -91,6 +91,20 @@ class CLIArgParser(argparse.ArgumentParser):
                 msg.extend(extra)
             raise argparse.ArgumentError(action, '\n'.join(msg))
 
+    def _check_help(self, action):
+        """
+        Python 3.14 added argparse.ArgumentParser._check_help, which
+        eagerly runs every argument's help string through %-style
+        expansion as soon as it's added to the parser (not just when
+        --help is actually rendered), raising ValueError for any
+        literal '%' that isn't a valid conversion specifier. The AWS
+        CLI renders its own --help output via docutils and never uses
+        argparse's %(default)s-style expansion, but argument help text
+        sourced from service model documentation frequently contains
+        literal '%' characters, so skip this validation entirely.
+        """
+        pass
+
     def parse_known_args(self, args, namespace=None):
         parsed, remaining = super(CLIArgParser, self).parse_known_args(
             args, namespace
