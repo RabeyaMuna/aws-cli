@@ -188,7 +188,7 @@ class ResultRecorder(BaseResultHandler):
         if not isinstance(result, BaseResult):
             raise ValueError(
                 'Any result using _get_ongoing_dict_key must subclass from '
-                f'BaseResult. Provided result is of type: {type(result)}'
+                'BaseResult. Provided result is of type: %s' % type(result)
             )
         key_parts = []
         for result_property in [result.transfer_type, result.src, result.dest]:
@@ -316,12 +316,7 @@ class ResultPrinter(BaseResultHandler):
     SRC_TRANSFER_LOCATION_FORMAT = '{src}'
 
     def __init__(
-        self,
-        result_recorder,
-        out_file=None,
-        error_file=None,
-        frequency=0,
-        oneline=True,
+        self, result_recorder, out_file=None, error_file=None, frequency=0, oneline=True
     ):
         """Prints status of ongoing transfer
 
@@ -361,20 +356,21 @@ class ResultPrinter(BaseResultHandler):
 
     def __call__(self, result):
         """Print the progress of the ongoing transfer based on a result"""
-        result_handler = self._result_handler_map.get(
-            type(result), self._print_noop
-        )
-        if type(result) is ProgressResult:
+        result_handler = self._result_handler_map.get(type(result), self._print_noop)
+        if type(result) is ProgressResult:                
             result_handler = self._override_progress_result_handler(
                 result, result_handler
             )
         result_handler(result=result)
 
     def _override_progress_result_handler(self, result, result_handler):
-        if type(result) in [ProgressResult] and (
-            self._first
-            or (self._frequency == 0)
-            or (time.time() - self._now >= self._frequency)
+        if (
+            type(result) in [ProgressResult]
+            and (
+                self._first
+                or (self._frequency == 0)
+                or (time.time() - self._now >= self._frequency)
+            )
         ):
             self._now = time.time()
             self._first = False
