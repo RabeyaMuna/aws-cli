@@ -1216,8 +1216,7 @@ class RbCommand(S3Command):
 
         if key:
             raise ParamValidationError(
-                'Please specify a valid bucket name only. '
-                f'E.g. s3://{bucket}'
+                f'Please specify a valid bucket name only. E.g. s3://{bucket}'
             )
 
         if parsed_args.force:
@@ -1635,7 +1634,7 @@ class CommandParameters:
         if 'locals3' == params['paths_type'] and not params['is_stream']:
             if not os.path.exists(params['src']):
                 raise RuntimeError(
-                    f'The user-provided path {params['src']} does not exist.'
+                    f"The user-provided path {params['src']} does not exist."
                 )
         # If the operation is downloading to a directory that does not exist,
         # create the directories so no warnings are thrown during the syncing
